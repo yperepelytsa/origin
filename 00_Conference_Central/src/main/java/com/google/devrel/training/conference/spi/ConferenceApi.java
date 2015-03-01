@@ -42,7 +42,7 @@ public class ConferenceApi {
      */
 
     // Declare this method as a method available externally through Endpoints
-    @ApiMethod(name = "saveProfile", path = "profile", httpMethod = HttpMethod.POST)
+    @ApiMethod(name = "saveProfile", path = "Profile", httpMethod = HttpMethod.POST)
     // The request that invokes this method should provide data that
     // conforms to the fields defined in ProfileForm
 
@@ -58,7 +58,7 @@ public class ConferenceApi {
         // TODO 2
         // If the user is not logged in, throw an UnauthorizedException
         if(u.getUserId()==null){
-        throw new UnauthorizedException("Not logged in");
+        	throw new UnauthorizedException("Not logged in");
         }
         // TODO 1
         // Set the teeShirtSize to the value sent by the ProfileForm, if sent
@@ -90,11 +90,14 @@ public class ConferenceApi {
         }
         // Create a new Profile entity from the
         // userId, displayName, mainEmail and teeShirtSize
-        Profile profile = new Profile(userId, displayName, mainEmail, teeShirtSize);
-
+        Profile profile = getProfile(u);
+        if (profile == null)
+        profile = new Profile(userId, displayName, mainEmail, teeShirtSize);
+        else
+        profile.update(displayName,teeShirtSize);
         // TODO 3 (In Lesson 3)
         // Save the Profile entity in the datastore
-
+        ofy().save().entity(profile).now();
         // Return the profile
         return profile;
     }
